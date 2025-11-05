@@ -16,6 +16,19 @@ fn perimeter2(rect :&Rectangle) -> f64{
     2.0 * (rect.length + rect.width)
 }
 
+fn print_references(){
+    let mut x: usize = 18;
+    //let ref1 = &x;
+    //let ref2 = &x;
+    let ref3 = &mut x;
+    //let ref4 = &mut x;
+    
+    //println!("ref1 : {}", ref1);
+    //println!("ref2 : {}", ref2);
+    println!("ref3 : {}", ref3);
+    //println!("ref4 : {}", ref4);
+}
+
 fn main() {
     let x = 10.0;
     let y = 20.0;
@@ -39,4 +52,6 @@ fn main() {
 
     let clone2_result = perimeter(my_rectangle.clone());
     println!("Le périmètre du clone 2 est : {}", clone2_result);
+
+    print_references();
 }
