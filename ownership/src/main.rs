@@ -2,6 +2,7 @@ fn average(a: f64, b: f64) -> f64 {
     (a + b) / 2.0
 }
 
+#[derive(Clone, Copy)]
 struct Rectangle{
     length: f64,
     width: f64,
@@ -32,4 +33,10 @@ fn main() {
 
     let perimeter_result2 = perimeter2(&my_rectangle);
     println!("Le périmètre du rectangle est : {}", perimeter_result2);
+
+    let clone1_result = perimeter(my_rectangle.clone());
+    println!("Le périmètre du clone 1 est : {}", clone1_result);
+
+    let clone2_result = perimeter(my_rectangle.clone());
+    println!("Le périmètre du clone 2 est : {}", clone2_result);
 }
