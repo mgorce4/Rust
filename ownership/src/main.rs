@@ -16,6 +16,12 @@ fn perimeter2(rect :&Rectangle) -> f64{
     2.0 * (rect.length + rect.width)
 }
 
+fn swap(a: &mut f64, b: &mut f64) {
+    let temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
 fn print_references(){
     let mut x: usize = 18;
     //let ref1 = &x;
@@ -33,7 +39,8 @@ fn main() {
     let x = 10.0;
     let y = 20.0;
     let my_rectangle = Rectangle { length: 5.0, width: 3.0 };
-
+    let mut a = 5.0;
+    let mut b = 10.0;
 
     let result = average(x, y);
     println!("La moyenne de {} et {} est : {}", x, y, result);
@@ -54,4 +61,12 @@ fn main() {
     println!("Le périmètre du clone 2 est : {}", clone2_result);
 
     print_references();
+
+
+    println!("\nAvant swap: a = {}, b = {}", a, b);
+    swap(&mut a, &mut b);
+    println!("Après swap: a = {}, b = {}", a, b);
+    swap(&mut a, &mut b);
+    println!("Après un second swap: a = {}, b = {}", a, b);
+
 }
