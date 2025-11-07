@@ -11,6 +11,11 @@ fn convert_to_int1(s: &str) {
     }
 }
 
+fn convert_to_int2(s : &str){
+    let number = s.parse::<i32>().expect("La chaine doit etre un nombre entier");
+    let square = number * number;
+    println!("Le carré de {} est {}", number, square);
+}
 
 fn main(){
     let sentence1 = "-17";
@@ -19,4 +24,6 @@ fn main(){
     convert_to_int1(sentence1);
     convert_to_int1(sentence2);
 
+    convert_to_int2(sentence1);
+    //convert_to_int2(sentence2); // Cela provoquera un panic
 }
