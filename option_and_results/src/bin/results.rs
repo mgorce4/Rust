@@ -17,6 +17,13 @@ fn convert_to_int2(s : &str){
     println!("Le carré de {} est {}", number, square);
 }
 
+fn convert_to_int3(s: &str) -> anyhow::Result<()> {
+    let number = s.parse::<i32>()?;
+    let square = number * number;
+    println!("Le carré de {} est {}", number, square);
+    Ok(())
+}
+
 fn main(){
     let sentence1 = "-17";
     let sentence2 = "Tux";
@@ -26,4 +33,9 @@ fn main(){
 
     convert_to_int2(sentence1);
     //convert_to_int2(sentence2); // Cela provoquera un panic
+
+    match convert_to_int3(sentence1) {
+        Ok(()) => (),
+        Err(e) => println!("Erreur lors de la conversion de '{}': {}", sentence1, e),
+    }
 }
