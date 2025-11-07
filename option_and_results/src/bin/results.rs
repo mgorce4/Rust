@@ -38,4 +38,9 @@ fn main(){
         Ok(()) => (),
         Err(e) => println!("Erreur lors de la conversion de '{}': {}", sentence1, e),
     }
+
+    match convert_to_int3(sentence2) {
+        Ok(()) => (),
+        Err(e) => println!("Erreur lors de la conversion de '{}': {}", sentence2, e),
+    }
 }
