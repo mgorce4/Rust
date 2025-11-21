@@ -1,3 +1,4 @@
+use anyhow::Ok;
 use clap::Parser;
 
 #[derive(Debug, Parser)]
@@ -5,18 +6,22 @@ struct Parameters {
     n: usize,
 }
 
-fn main(){
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
     let param = Parameters::parse();
-
-    if param.n <= 0 {
-        println!("Veuillez fournir un nombre supérieur à zéro.");
-        return;
-    }
+    let mut my_tasks = vec![];
 
 
-    // Affichage séquentiel : Bonjour i, Au revoir i pour chaque i
+
     for i in 0..param.n {
-        println!("Bonjour {}", i);
-        println!("Au revoir {}", i);
+        my_tasks.push(tokio::spawn(async move {
+            println!("Bonjour {}", i);
+            println!("Au revoir {}", i);
+        }));
     }
+
+    for task in my_tasks {
+        task.await.expect("Task panicked");
+    }
+    Ok(())
 }
