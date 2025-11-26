@@ -2,6 +2,6 @@
 
 resolver = "2"
 
-members = ["concurrency","option_and_results",
+members = ["concurrency", "network_services","option_and_results",
     "ownership"
 , "port_scanner"]
