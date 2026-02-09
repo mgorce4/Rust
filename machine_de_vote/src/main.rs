@@ -3,6 +3,7 @@ mod configuration;
 use configuration::Configuration;
 mod app_builder;
 use app_builder::run_app;
+mod domain;
 
 
 #[tokio::main]
