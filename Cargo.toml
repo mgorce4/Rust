@@ -2,6 +2,6 @@
 
 resolver = "2"
 
-members = ["chat_iut","concurrency", "exquisite_corpse", "network_services","option_and_results",
+members = ["chat_iut","concurrency", "exquisite_corpse", "machine_de_vote", "network_services","option_and_results",
     "ownership"
 , "port_scanner", "v010_spaghetti", "v020_configuration", "v021_app_builder", "v030_domain"]
