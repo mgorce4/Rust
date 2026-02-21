@@ -1,8 +1,8 @@
 
 
 use clap::Parser;
-use v030_domain::configuration::Configuration;
-use v030_domain::app_builder::run_app;
+use v040_memory::configuration::Configuration;
+use v040_memory::app_builder::run_app;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {

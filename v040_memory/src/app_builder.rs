@@ -2,14 +2,18 @@
 use tokio::io::{self, AsyncBufReadExt, BufReader};
 use crate::configuration::Configuration;
 use crate::domain::{VotingMachine, BallotPaper, Candidate, Voter, VoteOutcome};
+use crate::storages::memory::MemoryStore;
+use crate::storage::Storage;
 
 pub fn create_voting_machine(configuration: &Configuration) -> VotingMachine {
     let candidates: Vec<Candidate> = configuration.candidates.iter().cloned().map(Candidate).collect();
     VotingMachine::new(candidates)
 }
 
+
 pub async fn run_app(config: Configuration) -> anyhow::Result<()> {
-    let mut machine = create_voting_machine(&config);
+    let initial_machine = create_voting_machine(&config);
+    let mut store = MemoryStore::new(initial_machine).await?;
     let stdin = BufReader::new(io::stdin());
     let mut lines = stdin.lines();
 
@@ -17,6 +21,8 @@ pub async fn run_app(config: Configuration) -> anyhow::Result<()> {
     println!("Commandes valides :\n- voter <votant> <candidat>\n- voter <votant>\n- votants\n- scores");
 
     while let Some(line) = lines.next_line().await? {
+        // Charger l'état courant de la machine au début de chaque itération
+        let mut machine = store.get_voting_machine().await?;
         let input = line.trim();
         if input.is_empty() {
             println!("Veuillez saisir une commande : voter <votant> <candidat>, voter <votant>, votants, scores");
@@ -50,6 +56,8 @@ pub async fn run_app(config: Configuration) -> anyhow::Result<()> {
                         VoteOutcome::InvalidVote(v) => println!("{} a voté nul", v.0),
                         VoteOutcome::HasAlreadyVoted(v) => println!("{} a déjà voté", v.0),
                     }
+                    // Stocker l'état de la machine après chaque vote
+                    store.put_voting_machine(machine).await?;
                 }
             }
             Some("votants") => {

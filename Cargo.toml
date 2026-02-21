@@ -4,4 +4,4 @@ resolver = "2"
 
 members = ["chat_iut","concurrency", "exquisite_corpse", "machine_de_vote", "network_services","option_and_results",
     "ownership"
-, "port_scanner", "v010_spaghetti", "v020_configuration", "v021_app_builder", "v030_domain"]
+, "port_scanner", "v010_spaghetti", "v020_configuration", "v021_app_builder", "v030_domain", "v040_memory"]
