@@ -1,9 +1,8 @@
-pub mod configuration;
+
 
 use clap::Parser;
-use configuration::Configuration;
-mod app_builder;
-use app_builder::run_app;
+use v041_file::configuration::Configuration;
+use v041_file::app_builder::run_app;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
