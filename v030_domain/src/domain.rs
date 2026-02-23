@@ -1,5 +1,59 @@
 #[cfg(test)]
 mod tests {
+        #[test]
+        fn test_initial_scores_are_zero() {
+            let candidates = vec![Candidate("Alice".to_string()), Candidate("Bob".to_string())];
+            let machine = VotingMachine::new(candidates.clone());
+            let scoreboard = machine.get_scoreboard();
+            for candidate in candidates {
+                let score = scoreboard.scores.get(&candidate).unwrap().0;
+                assert_eq!(score, 0, "Score du candidat {:?} devrait être 0", candidate);
+            }
+            assert_eq!(scoreboard.blank_votes.0, 0, "Score blanc devrait être 0");
+            assert_eq!(scoreboard.invalid_score.0, 0, "Score nul devrait être 0");
+        }
+
+        #[test]
+        fn test_no_double_vote() {
+            let mut machine = setup_machine();
+            let voter = Voter("Tux".to_string());
+            let candidate = Candidate("Alice".to_string());
+            let ballot = BallotPaper { voter: voter.clone(), candidate: Some(candidate.clone()) };
+            let outcome1 = machine.vote(ballot);
+            match outcome1 {
+                VoteOutcome::AcceptedVote(v, c) => {
+                    assert_eq!(v, voter);
+                    assert_eq!(c, candidate);
+                },
+                _ => panic!("Expected AcceptedVote"),
+            }
+            // Deuxième vote du même votant
+            let ballot2 = BallotPaper { voter: voter.clone(), candidate: Some(candidate.clone()) };
+            let outcome2 = machine.vote(ballot2);
+            match outcome2 {
+                VoteOutcome::HasAlreadyVoted(v) => assert_eq!(v, voter),
+                _ => panic!("Expected HasAlreadyVoted"),
+            }
+            // Le score du candidat ne doit pas avoir augmenté
+            let score = machine.get_scoreboard().scores.get(&candidate).unwrap().0;
+            assert_eq!(score, 1);
+        }
+
+        #[test]
+        fn test_vote_for_undeclared_candidate_is_invalid() {
+            let mut machine = setup_machine();
+            let voter = Voter("Tux".to_string());
+            let undeclared = Candidate("Charlie".to_string());
+            let ballot = BallotPaper { voter: voter.clone(), candidate: Some(undeclared.clone()) };
+            let outcome = machine.vote(ballot);
+            match outcome {
+                VoteOutcome::InvalidVote(v) => assert_eq!(v, voter),
+                _ => panic!("Expected InvalidVote"),
+            }
+            // Le score nul doit être 1
+            let invalid_score = machine.get_scoreboard().invalid_score.0;
+            assert_eq!(invalid_score, 1);
+        }
     use super::*;
 
     fn setup_machine() -> VotingMachine {
