@@ -1,9 +1,14 @@
 use tokio::io::{self, AsyncBufReadExt, BufReader};
 use crate::configuration::Configuration;
-use crate::domain::{VotingMachine, BallotPaper, Candidate, Voter, VoteOutcome};
+use crate::domain::{VotingMachine};
 use crate::storages::file::FileStore;
 use crate::storages::memory::MemoryStore;
 use crate::storage::Storage;
+use crate::interfaces::lexicon::Lexicon;
+use crate::interfaces::lexicons::french::FRENCH_LEXICON;
+use crate::interfaces::lexicons::english::ENGLISH_LEXICON;
+use crate::interfaces::cli_interface::handle_line;
+use crate::domain::{Candidate, VotingController};
 
 pub fn create_voting_machine(configuration: &Configuration) -> VotingMachine {
     let candidates: Vec<Candidate> = configuration.candidates.iter().cloned().map(Candidate).collect();
@@ -16,71 +21,17 @@ pub async fn handle_lines<Store: Storage>(config: Configuration) -> anyhow::Resu
     let stdin = BufReader::new(io::stdin());
     let mut lines = stdin.lines();
 
-    println!("Bienvenue dans la machine de vote électronique !");
-    println!("Commandes valides :\n- voter <votant> <candidat>\n- voter <votant>\n- votants\n- scores");
+    let lexicon: &Lexicon = match config.language.as_str() {
+        "en" => &ENGLISH_LEXICON,
+        _ => &FRENCH_LEXICON,
+    };
 
+    println!("{}", lexicon.prompt);
+
+    let mut controller = VotingController::new(store);
     while let Some(line) = lines.next_line().await? {
-        let mut machine = store.get_voting_machine().await?;
-        let input = line.trim();
-        if input.is_empty() {
-            println!("Veuillez saisir une commande : voter <votant> <candidat>, voter <votant>, votants, scores");
-            continue;
-        }
-        let mut parts = input.split_whitespace();
-        match parts.next() {
-            Some("voter") => {
-                let votant = parts.next();
-                let candidat = parts.next();
-                if votant.is_none() {
-                    println!("Veuillez indiquer le nom du votant (ex: voter Tux NixOS)");
-                    continue;
-                }
-                let voter = Voter(votant.unwrap().to_string());
-                let ballot = if let Some(c) = candidat {
-                    Some(BallotPaper {
-                        voter: voter.clone(),
-                        candidate: Some(Candidate(c.to_string())),
-                    })
-                } else {
-                    Some(BallotPaper {
-                        voter: voter.clone(),
-                        candidate: None,
-                    })
-                };
-                if let Some(ballot) = ballot {
-                    match machine.vote(ballot) {
-                        VoteOutcome::AcceptedVote(v, c) => println!("{} a voté {}", v.0, c.0),
-                        VoteOutcome::BlankVote(v) => println!("{} a voté blanc", v.0),
-                        VoteOutcome::InvalidVote(v) => println!("{} a voté nul", v.0),
-                        VoteOutcome::HasAlreadyVoted(v) => println!("{} a déjà voté", v.0),
-                    }
-                    store.put_voting_machine(machine).await?;
-                }
-            }
-            Some("votants") => {
-                let voters = machine.get_voters();
-                if voters.is_empty() {
-                    println!("Aucun votant pour l'instant.");
-                } else {
-                    println!("Liste des votants :");
-                    for v in voters {
-                        println!("- {}", v.0);
-                    }
-                }
-            }
-            Some("scores") => {
-                let scoreboard = machine.get_scoreboard();
-                println!("Scores :");
-                for (c, s) in &scoreboard.scores {
-                    println!("{}: {}", c.0, s.0);
-                }
-                println!("Blancs: {}", scoreboard.blank_votes.0);
-                println!("Nuls: {}", scoreboard.invalid_score.0);
-            }
-            _ => {
-                println!("Commande invalide. Commandes valides : voter <votant> <candidat>, voter <votant>, votants, scores");
-            }
-        }
+        let msg = handle_line(&line, &mut controller, lexicon).await?;
+        println!("{}", msg);
     }
     Ok(())
 }

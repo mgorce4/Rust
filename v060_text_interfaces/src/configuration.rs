@@ -10,6 +10,9 @@ pub struct Configuration {
 	/// Type de stockage
 	#[arg(short = 's', long = "storage", default_value = "file")]
 	pub storage: StorageType,
+	/// Langue de l'interface (en, fr)
+	#[arg(short = 'l', long = "language", default_value = "fr")]
+	pub language: String,
 }
 
 #[derive(Clone, Copy, ValueEnum, Debug)]
