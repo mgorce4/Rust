@@ -198,7 +198,10 @@ name = "machine_de_vote"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "async-trait",
  "clap",
+ "serde",
+ "serde_json",
  "tokio",
 ]
 
@@ -488,6 +491,30 @@ dependencies = [
 
 [[package]]
 name = "v041_file"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "clap",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "v050_use_cases"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "clap",
+ "serde",
+ "serde_json",
+ "tokio",
+]
+
+[[package]]
+name = "v060_text_interfaces"
 version = "0.1.0"
 dependencies = [
  "anyhow",

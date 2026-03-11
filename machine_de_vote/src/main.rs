@@ -4,6 +4,8 @@ use configuration::Configuration;
 mod app_builder;
 use app_builder::run_app;
 mod domain;
+mod storage;
+mod storages;
 
 
 #[tokio::main]

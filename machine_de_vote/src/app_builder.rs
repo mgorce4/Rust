@@ -1,6 +1,7 @@
 use crate::configuration::Configuration;
 use crate::domain::{VotingMachine, BallotPaper, VoteOutcome, Candidate, Voter};
 use tokio::io::{self, AsyncBufReadExt, BufReader};
+use crate::storage;
 
 
 
@@ -8,7 +9,7 @@ pub async fn run_app(configuration:Configuration) -> anyhow::Result<()> {
     // You likely need to convert configuration.candidates (Vec<String>) to Vec<Candidate>
     let candidates = configuration.candidates.into_iter().map(|c| Candidate(c)).collect();
     let mut voting_machine = VotingMachine::new(candidates);
-
+    let mut storage = storage::MemoryStorage::new(voting_machine.clone()).await?;
     
     let mut lines = BufReader::new(io::stdin()).lines();
     while let Some(line) = lines.next_line().await? {

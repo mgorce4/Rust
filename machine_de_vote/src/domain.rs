@@ -51,12 +51,11 @@ pub enum VoteOutcome{
     InvalidVote(Voter),
     HasAlreadyVoted(Voter),
 }
-
+#[derive(Clone, PartialEq, Debug)]
 pub struct VotingMachine {
     voters: AttendanceSheet,
     scoreboard: Scoreboard,
 }
-
 impl VotingMachine{
     pub fn new(candidates: Vec<Candidate>) -> Self {
         return Self{
