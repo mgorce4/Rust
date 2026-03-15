@@ -19,7 +19,7 @@ pub fn create_voting_machine(configuration: &Configuration) -> VotingMachine {
 
 pub async fn handle_lines<Store, Serv>(config: Configuration) -> anyhow::Result<()>
 where
-    Store: Storage + Send + Sync,
+    Store: Storage + Send + Sync + Clone,
     Serv: Service<Store> + Send,
 {
     let initial_machine = create_voting_machine(&config);
@@ -34,7 +34,7 @@ where
     service.serve().await
 }
 
-pub async fn dispatch_service<Store: Storage + Send + Sync>(config: Configuration) -> anyhow::Result<()> {
+pub async fn dispatch_service<Store: Storage + Send + Sync + Clone>(config: Configuration) -> anyhow::Result<()> {
     match config.service.as_str() {
         "udp" => handle_lines::<Store, UdpService<Store>>(config).await,
         _ => handle_lines::<Store, StdioService<Store>>(config).await,
