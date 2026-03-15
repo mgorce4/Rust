@@ -1,7 +1,8 @@
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::domain::{VotingController, VotingMachine, Candidate};
+    use crate::use_cases::VotingController;
+    use crate::domain::{VotingMachine, Candidate};
     use crate::storages::memory::MemoryStore;
     use crate::interfaces::lexicons::french::FRENCH_LEXICON;
     use crate::storage::Storage;
@@ -17,62 +18,63 @@ mod tests {
 
     #[tokio::test]
     async fn demande_commande_si_vide() {
-        let mut controller = setup_controller_with_candidates(vec!["Alice"]).await;
-        let res = handle_line("", &mut controller, &FRENCH_LEXICON).await.unwrap();
+        let controller = setup_controller_with_candidates(vec!["Alice"]).await;
+        let res = handle_line("", &controller, &FRENCH_LEXICON).await.unwrap();
         assert_eq!(res, FRENCH_LEXICON.prompt);
     }
 
     #[tokio::test]
     async fn affiche_votants() {
-        let mut controller = setup_controller_with_candidates(vec!["Alice"]).await;
-        let _ = handle_line("voter Tux Alice", &mut controller, &FRENCH_LEXICON).await;
-        let res = handle_line("votants", &mut controller, &FRENCH_LEXICON).await.unwrap();
+        let controller = setup_controller_with_candidates(vec!["Alice"]).await;
+        let _ = handle_line("voter Tux Alice", &controller, &FRENCH_LEXICON).await;
+        let res = handle_line("votants", &controller, &FRENCH_LEXICON).await.unwrap();
         assert!(res.contains("Tux"));
     }
 
     #[tokio::test]
     async fn affiche_scores() {
-        let mut controller = setup_controller_with_candidates(vec!["Alice"]).await;
-        let _ = handle_line("voter Tux Alice", &mut controller, &FRENCH_LEXICON).await;
-        let res = handle_line("scores", &mut controller, &FRENCH_LEXICON).await.unwrap();
+        let controller = setup_controller_with_candidates(vec!["Alice"]).await;
+        let _ = handle_line("voter Tux Alice", &controller, &FRENCH_LEXICON).await;
+        let res = handle_line("scores", &controller, &FRENCH_LEXICON).await.unwrap();
         assert!(res.contains("Scores"));
         assert!(res.contains("Alice"));
     }
 
     #[tokio::test]
     async fn peut_voter() {
-        let mut controller = setup_controller_with_candidates(vec!["Alice"]).await;
-        let res = handle_line("voter Tux Alice", &mut controller, &FRENCH_LEXICON).await.unwrap();
+        let controller = setup_controller_with_candidates(vec!["Alice"]).await;
+        let res = handle_line("voter Tux Alice", &controller, &FRENCH_LEXICON).await.unwrap();
         assert!(res.contains("Tux a voté Alice"));
     }
 
     #[tokio::test]
     async fn peut_voter_blanc() {
-        let mut controller = setup_controller_with_candidates(vec!["Alice"]).await;
-        let res = handle_line("voter Tux", &mut controller, &FRENCH_LEXICON).await.unwrap();
+        let controller = setup_controller_with_candidates(vec!["Alice"]).await;
+        let res = handle_line("voter Tux", &controller, &FRENCH_LEXICON).await.unwrap();
         assert!(res.contains("Tux a voté blanc"));
     }
 
     #[tokio::test]
     async fn demande_votant_si_manquant() {
-        let mut controller = setup_controller_with_candidates(vec!["Alice"]).await;
-        let res = handle_line("voter", &mut controller, &FRENCH_LEXICON).await.unwrap();
+        let controller = setup_controller_with_candidates(vec!["Alice"]).await;
+        let res = handle_line("voter", &controller, &FRENCH_LEXICON).await.unwrap();
         assert_eq!(res, FRENCH_LEXICON.prompt_voter);
     }
 
     #[tokio::test]
     async fn commande_invalide() {
-        let mut controller = setup_controller_with_candidates(vec!["Alice"]).await;
-        let res = handle_line("foobar", &mut controller, &FRENCH_LEXICON).await.unwrap();
+        let controller = setup_controller_with_candidates(vec!["Alice"]).await;
+        let res = handle_line("foobar", &controller, &FRENCH_LEXICON).await.unwrap();
         assert_eq!(res, FRENCH_LEXICON.invalid_command);
     }
 }
 
-use crate::domain::{VotingController, VoteOutcome, Voter, Candidate, BallotPaper};
+use crate::use_cases::VotingController;
+use crate::domain::{VoteOutcome, Voter, Candidate, BallotPaper};
 use crate::storage::Storage;
 use crate::interfaces::lexicon::Lexicon;
 
-pub async fn handle_line<Store: Storage>(line: &str, controller: &mut VotingController<Store>, lexicon: &Lexicon) -> anyhow::Result<String> {
+pub async fn handle_line<Store: Storage>(line: &str, controller: &VotingController<Store>, lexicon: &Lexicon) -> anyhow::Result<String> {
     let input = line.trim();
     if input.is_empty() {
         return Ok(lexicon.prompt.to_string());

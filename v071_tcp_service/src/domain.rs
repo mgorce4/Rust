@@ -1,6 +1,4 @@
-use std::sync::Arc;
-use tokio::sync::RwLock;
-use crate::storage::Storage;
+// ...existing code...
 use crate::use_cases::VoteForm;
 
 
@@ -122,10 +120,6 @@ pub struct VotingMachine {
     scoreboard: Scoreboard,
 }
 
-#[derive(Clone)]
-pub struct VotingController<Store> {
-        store: Arc<RwLock<Store>>,
-}
 
 impl Scoreboard{
     pub fn new(candidates: Vec<Candidate>) -> Self {
@@ -196,24 +190,7 @@ impl From<VoteForm> for BallotPaper {
     }
 }
 
-impl<Store: Storage> VotingController<Store> {
-        pub fn new(store: Store) -> Self {
-                Self { store: Arc::new(RwLock::new(store)) }
-        }
-        pub async fn vote(&self, vote_form: VoteForm) -> anyhow::Result<VoteOutcome> {
-                let mut store = self.store.write().await;
-                let mut machine = store.get_voting_machine().await?;
-                let ballot_paper = BallotPaper::from(vote_form);
-                let outcome = machine.vote(ballot_paper);
-                store.put_voting_machine(machine).await?;
-                Ok(outcome)
-        }
-        pub async fn get_voting_machine(&self) -> anyhow::Result<VotingMachine> {
-                let store = self.store.read().await;
-                store.get_voting_machine().await
-        }
-
-}
+// VotingController implementation moved to use_cases.rs
 
 
 
@@ -223,7 +200,7 @@ mod controller_tests {
     use crate::domain::{Voter, Candidate, VoteOutcome, VotingMachine};
     use crate::storages::memory::MemoryStore;
     use crate::storage::Storage;
-    use crate::domain::VotingController;
+    use crate::use_cases::VotingController;
 
 
     async fn setup_controller_with_candidates(candidates: Vec<&str>) -> VotingController<MemoryStore> {

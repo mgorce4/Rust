@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 use crate::interfaces::lexicon::Lexicon;
-use crate::domain::VotingController;
+use crate::use_cases::VotingController;
 
 #[async_trait]
 pub trait Service<Store> {

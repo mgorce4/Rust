@@ -1,5 +1,5 @@
 use crate::interfaces::lexicon::Lexicon;
-use crate::domain::VotingController;
+use crate::use_cases::VotingController;
 use crate::storage::Storage;
 use crate::service::Service;
 use async_trait::async_trait;

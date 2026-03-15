@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 use crate::interfaces::lexicon::Lexicon;
-use crate::domain::VotingController;
+use crate::use_cases::VotingController;
 use crate::storage::Storage;
 use crate::interfaces::cli_interface::handle_line;
 use crate::service::Service;
@@ -22,7 +22,7 @@ impl<Store: Storage + Send + Sync> Service<Store> for StdioService<Store> {
         let mut lines = stdin.lines();
         println!("{}", self.lexicon.prompt);
         while let Some(line) = lines.next_line().await? {
-            let msg = handle_line(&line, &mut self.controller, &self.lexicon).await?;
+            let msg = handle_line(&line, &self.controller, &self.lexicon).await?;
             println!("{}", msg);
         }
         Ok(())

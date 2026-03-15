@@ -7,10 +7,12 @@ use crate::storage::Storage;
 // use crate::interfaces::lexicon::Lexicon;
 use crate::interfaces::lexicons::french::FRENCH_LEXICON;
 use crate::interfaces::lexicons::english::ENGLISH_LEXICON;
-use crate::domain::{Candidate, VotingController};
+use crate::domain::Candidate;
+use crate::use_cases::VotingController;
 use crate::service::Service;
 use crate::services::stdio::StdioService;
 use crate::services::udp::UdpService;
+use crate::services::tcp::TcpService;
 
 pub fn create_voting_machine(configuration: &Configuration) -> VotingMachine {
     let candidates: Vec<Candidate> = configuration.candidates.iter().cloned().map(Candidate).collect();
@@ -19,7 +21,7 @@ pub fn create_voting_machine(configuration: &Configuration) -> VotingMachine {
 
 pub async fn handle_lines<Store, Serv>(config: Configuration) -> anyhow::Result<()>
 where
-    Store: Storage + Send + Sync + Clone,
+    Store: Storage + Send + Sync + Clone + 'static,
     Serv: Service<Store> + Send,
 {
     let initial_machine = create_voting_machine(&config);
@@ -34,9 +36,10 @@ where
     service.serve().await
 }
 
-pub async fn dispatch_service<Store: Storage + Send + Sync + Clone>(config: Configuration) -> anyhow::Result<()> {
+pub async fn dispatch_service<Store: Storage + Send + Sync + Clone + 'static>(config: Configuration) -> anyhow::Result<()> {
     match config.service.as_str() {
         "udp" => handle_lines::<Store, UdpService<Store>>(config).await,
+        "tcp" => handle_lines::<Store, TcpService<Store>>(config).await,
         _ => handle_lines::<Store, StdioService<Store>>(config).await,
     }
 }
