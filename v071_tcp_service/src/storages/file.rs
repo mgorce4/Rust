@@ -59,11 +59,12 @@ impl From<VotingMachineDao> for crate::domain::VotingMachine {
     }
 }
 
+#[derive(Clone)]
 pub struct FileStore {
     filepath: String,
 }
 
-#[derive(Clone)]
+
 
 impl FileStore {
     pub async fn create(machine: VotingMachine, filepath: &str) -> Result<Self> {
@@ -104,9 +105,9 @@ async fn store_voting_machine(machine: VotingMachine, filepath: &str) -> anyhow:
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::domain::{VotingMachine, Candidate, AttendanceSheet, Scoreboard};
+    use crate::domain::{VotingMachine, Candidate};
     use std::fs;
-    use std::collections::BTreeSet;
+    // use std::collections::BTreeSet;
     use tokio::runtime::Runtime;
 
     fn test_machine() -> VotingMachine {

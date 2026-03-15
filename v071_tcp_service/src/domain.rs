@@ -1,3 +1,5 @@
+use std::sync::Arc;
+use tokio::sync::RwLock;
 use crate::storage::Storage;
 use crate::use_cases::VoteForm;
 
@@ -218,7 +220,7 @@ impl<Store: Storage> VotingController<Store> {
 #[cfg(test)]
 mod controller_tests {
     use super::*;
-    use crate::domain::{Voter, Candidate, BallotPaper, VoteOutcome, VotingMachine, Score};
+    use crate::domain::{Voter, Candidate, VoteOutcome, VotingMachine};
     use crate::storages::memory::MemoryStore;
     use crate::storage::Storage;
     use crate::domain::VotingController;
@@ -235,7 +237,7 @@ mod controller_tests {
 
     #[tokio::test]
     async fn test_valid_vote() {
-        let mut controller = setup_controller_with_candidates(vec!["Alice"]).await;
+        let controller = setup_controller_with_candidates(vec!["Alice"]).await;
         let vote_form = VoteForm { voter: "Tux".to_string(), candidate: "Alice".to_string() };
         let outcome = controller.vote(vote_form).await.unwrap();
         assert!(matches!(outcome, VoteOutcome::AcceptedVote(ref v, ref c)
@@ -248,7 +250,7 @@ mod controller_tests {
 
     #[tokio::test]
     async fn test_blank_vote() {
-        let mut controller = setup_controller_with_candidates(vec!["Alice"]).await;
+        let controller = setup_controller_with_candidates(vec!["Alice"]).await;
         let vote_form = VoteForm { voter: "Tux".to_string(), candidate: "".to_string() };
         let outcome = controller.vote(vote_form).await.unwrap();
         assert!(matches!(outcome, VoteOutcome::BlankVote(ref v)
@@ -261,7 +263,7 @@ mod controller_tests {
 
     #[tokio::test]
     async fn test_invalid_vote() {
-        let mut controller = setup_controller_with_candidates(vec!["Alice"]).await;
+        let controller = setup_controller_with_candidates(vec!["Alice"]).await;
         let vote_form = VoteForm { voter: "Tux".to_string(), candidate: "Bob".to_string() };
         let outcome = controller.vote(vote_form).await.unwrap();
         assert!(matches!(outcome, VoteOutcome::InvalidVote(ref v)
@@ -274,7 +276,7 @@ mod controller_tests {
 
     #[tokio::test]
     async fn test_has_already_voted() {
-        let mut controller = setup_controller_with_candidates(vec!["Alice"]).await;
+        let controller = setup_controller_with_candidates(vec!["Alice"]).await;
         let vote_form = VoteForm { voter: "Tux".to_string(), candidate: "Alice".to_string() };
         let _ = controller.vote(vote_form.clone()).await.unwrap();
         // Deuxième vote du même votant

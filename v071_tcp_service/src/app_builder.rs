@@ -1,10 +1,10 @@
-use tokio::io::{self, AsyncBufReadExt, BufReader};
+// use tokio::io::{self, AsyncBufReadExt, BufReader};
 use crate::configuration::Configuration;
 use crate::domain::{VotingMachine};
 use crate::storages::file::FileStore;
 use crate::storages::memory::MemoryStore;
 use crate::storage::Storage;
-use crate::interfaces::lexicon::Lexicon;
+// use crate::interfaces::lexicon::Lexicon;
 use crate::interfaces::lexicons::french::FRENCH_LEXICON;
 use crate::interfaces::lexicons::english::ENGLISH_LEXICON;
 use crate::domain::{Candidate, VotingController};

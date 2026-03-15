@@ -1,8 +1,8 @@
 
 
 use clap::Parser;
-use v070_cli_services::configuration::Configuration;
-use v070_cli_services::app_builder::run_app;
+use v071_tcp_service::configuration::Configuration;
+use v071_tcp_service::app_builder::run_app;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {

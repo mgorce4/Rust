@@ -1,5 +1,5 @@
 [package]
-name = "v070_cli_services"
+name = "v071_tcp_service"
 version = "0.1.0"
 edition = "2024"
 
