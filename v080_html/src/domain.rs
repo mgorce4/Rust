@@ -3,6 +3,7 @@ impl VotingMachine {
         self.voters.0.iter()
     }
 }
+// Only one get_voters implementation should exist. If another exists elsewhere, remove it.
 use crate::storage::Storage;
 use crate::use_cases::VoteForm;
 
@@ -126,7 +127,7 @@ pub struct VotingMachine {
 }
 
 #[derive(Clone)]
-pub struct VotingController<Store> {
+pub struct VotingController<Store: Clone> {
     store: Store,
 }
 
@@ -181,9 +182,7 @@ impl VotingMachine {
     pub fn get_scoreboard(&self) -> &Scoreboard {
         &self.scoreboard
     }
-    pub fn get_voters(&self) -> &Set<Voter> {
-        &self.voters.0
-    }
+    // Only the iterator version of get_voters remains to avoid ambiguity
 }
 
 impl From<VoteForm> for BallotPaper {
@@ -199,7 +198,7 @@ impl From<VoteForm> for BallotPaper {
     }
 }
 
-impl<Store: Storage> VotingController<Store> {
+impl<Store: Storage + Clone> VotingController<Store> {
   pub fn new(store: Store) -> Self{
     Self { store }
   }
@@ -221,7 +220,7 @@ impl<Store: Storage> VotingController<Store> {
 #[cfg(test)]
 mod controller_tests {
     use super::*;
-    use crate::domain::{Voter, Candidate, BallotPaper, VoteOutcome, VotingMachine, Score};
+    use crate::domain::{Voter, Candidate, VoteOutcome, VotingMachine};
     use crate::storages::memory::MemoryStore;
     use crate::storage::Storage;
     use crate::domain::VotingController;

@@ -4,14 +4,14 @@ use crate::storage::Storage;
 use crate::service::Service;
 use async_trait::async_trait;
 
-pub struct UdpService<Store> {
+pub struct UdpService<Store: Clone> {
     pub port: u16,
     pub lexicon: Lexicon,
     pub controller: VotingController<Store>,
 }
 
 #[async_trait]
-impl<Store: Storage + Send + Sync> Service<Store> for UdpService<Store> {
+impl<Store: Storage + Send + Sync + Clone> Service<Store> for UdpService<Store> {
     fn new(port: u16, lexicon: Lexicon, controller: VotingController<Store>) -> Self {
         UdpService { port, lexicon, controller }
     }

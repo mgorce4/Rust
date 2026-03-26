@@ -1,12 +1,12 @@
-use tokio::io::{self, AsyncBufReadExt, BufReader};
+use crate::interfaces::lexicons::{ENGLISH_LEXICON, FRENCH_LEXICON};
+// Removed unused tokio::io imports
 use crate::configuration::Configuration;
 use crate::domain::{VotingMachine};
 use crate::storages::file::FileStore;
 use crate::storages::memory::MemoryStore;
 use crate::storage::Storage;
-use crate::interfaces::lexicon::Lexicon;
-use crate::interfaces::lexicons::french::FRENCH_LEXICON;
-use crate::interfaces::lexicons::english::ENGLISH_LEXICON;
+// Removed unused import Lexicon
+// Removed unresolved lexicons imports
 use crate::domain::{Candidate, VotingController};
 use crate::service::Service;
 use crate::services::stdio::StdioService;
@@ -20,7 +20,7 @@ pub fn create_voting_machine(configuration: &Configuration) -> VotingMachine {
 
 pub async fn handle_lines<Store, Serv>(config: Configuration) -> anyhow::Result<()> 
 where
-    Store: Storage + Send + Sync + 'static,
+    Store: Storage + Send + Sync + Clone + 'static,
     Serv: Service<Store> + Send,
 {
     let initial_machine = create_voting_machine(&config);
@@ -35,7 +35,7 @@ where
     service.serve().await
 }
 
-pub async fn dispatch_service<Store: Storage + Send + Sync + 'static>(config: Configuration) -> anyhow::Result<()> {
+pub async fn dispatch_service<Store: Storage + Send + Sync + Clone + 'static>(config: Configuration) -> anyhow::Result<()> {
     match config.service.as_str() {
         "udp" => handle_lines::<Store, UdpService<Store>>(config).await,
         "web" => handle_lines::<Store, WebService>(config).await,

@@ -6,13 +6,13 @@ use crate::interfaces::cli_interface::handle_line;
 use crate::service::Service;
 use tokio::io::{self, AsyncBufReadExt, BufReader};
 
-pub struct StdioService<Store> {
+pub struct StdioService<Store: Clone> {
     pub lexicon: Lexicon,
     pub controller: VotingController<Store>,
 }
 
 #[async_trait]
-impl<Store: Storage + Send + Sync> Service<Store> for StdioService<Store> {
+impl<Store: Storage + Send + Sync + Clone> Service<Store> for StdioService<Store> {
     fn new(_port: u16, lexicon: Lexicon, controller: VotingController<Store>) -> Self {
         StdioService { lexicon, controller }
     }

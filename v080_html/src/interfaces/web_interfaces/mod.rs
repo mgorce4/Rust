@@ -22,7 +22,7 @@ impl IntoResponse for AxumError {
 }
 
 #[derive(Clone)]
-pub struct AxumState<Store> {
+pub struct AxumState<Store: Clone> {
     pub controller: VotingController<Store>,
     pub routes: WebRoutes,
     pub lexicon: Lexicon,

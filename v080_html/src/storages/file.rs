@@ -44,7 +44,7 @@ impl From<ScoreboardDao> for crate::domain::Scoreboard {
 impl From<crate::domain::VotingMachine> for VotingMachineDao {
     fn from(machine: crate::domain::VotingMachine) -> Self {
         VotingMachineDao {
-            voters: machine.get_voters().iter().map(|v| v.0.clone()).collect(),
+            voters: machine.get_voters().map(|v| v.0.clone()).collect(),
             scoreboard: ScoreboardDao::from(machine.get_scoreboard().clone()),
         }
     }
@@ -103,9 +103,8 @@ async fn store_voting_machine(machine: VotingMachine, filepath: &str) -> anyhow:
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::domain::{VotingMachine, Candidate, AttendanceSheet, Scoreboard};
+    use crate::domain::{VotingMachine, Candidate};
     use std::fs;
-    use std::collections::BTreeSet;
     use tokio::runtime::Runtime;
 
     fn test_machine() -> VotingMachine {
@@ -123,7 +122,7 @@ mod tests {
             let machine2 = test_machine();
             store.put_voting_machine(machine2).await.unwrap();
             let loaded = store.get_voting_machine().await.unwrap();
-            assert_eq!(loaded.get_voters().len(), 0);
+            assert_eq!(loaded.get_voters().count(), 0);
         });
         let _ = fs::remove_file(file);
     }
@@ -142,7 +141,7 @@ mod tests {
         rt.block_on(async {
             let store = FileStore::create(test_machine(), file).await.unwrap();
             let loaded = store.get_voting_machine().await.unwrap();
-            assert_eq!(loaded.get_voters().len(), 0);
+            assert_eq!(loaded.get_voters().count(), 0);
         });
         let _ = fs::remove_file(file);
     }

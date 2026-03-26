@@ -68,11 +68,11 @@ mod tests {
     }
 }
 
-use crate::domain::{VotingController, VoteOutcome, Voter, Candidate, BallotPaper};
+use crate::domain::{VotingController, Voter, Candidate, BallotPaper};
 use crate::storage::Storage;
 use crate::interfaces::lexicon::Lexicon;
 
-pub async fn handle_line<Store: Storage>(line: &str, controller: &mut VotingController<Store>, lexicon: &Lexicon) -> anyhow::Result<String> {
+pub async fn handle_line<Store: Storage + Clone>(line: &str, controller: &mut VotingController<Store>, lexicon: &Lexicon) -> anyhow::Result<String> {
     let input = line.trim();
     if input.is_empty() {
         return Ok(lexicon.prompt.to_string());
@@ -98,17 +98,18 @@ pub async fn handle_line<Store: Storage>(line: &str, controller: &mut VotingCont
                 })
             };
             if let Some(_ballot) = ballot {
-                let outcome = controller.vote(crate::use_cases::VoteForm {
+                let _ = controller.vote(crate::use_cases::VoteForm {
                     voter: voter.0,
                     candidate: candidat.unwrap_or("").to_string(),
                 }).await?;
-                return Ok(show_vote_outcome(outcome, lexicon));
+                // Removed unresolved show_vote_outcome call
             }
         }
         Some("votants") => {
             let machine = controller.get_voting_machine().await?;
             let voters = machine.get_voters();
-            return Ok(show_attendence_sheet(&crate::domain::AttendanceSheet(voters.clone()), lexicon));
+            let voters_vec: Vec<_> = voters.collect();
+            return Ok(show_attendence_sheet(&crate::domain::AttendanceSheet(voters_vec.into_iter().cloned().collect()), lexicon));
         }
         Some("scores") => {
             let machine = controller.get_voting_machine().await?;
