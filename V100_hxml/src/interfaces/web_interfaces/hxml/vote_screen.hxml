@@ -1,0 +1,25 @@
+<doc xmlns="https://hyperview.org/hyperview">
+  <screen>
+    <styles>
+      <style id="title" fontSize="28" fontWeight="bold" marginBottom="16" />
+      <style id="label" fontSize="16" marginBottom="4" />
+      <style id="input" borderWidth="1" borderColor="#888" padding="8" marginBottom="8" />
+      <style id="button" backgroundColor="red" color="white" fontSize="18" padding="10" marginBottom="16" textAlign="center" />
+      <style id="button-green" backgroundColor="#228B22" color="white" fontSize="18" padding="10" marginBottom="8" textAlign="center" />
+      <style id="container" padding="16" />
+      <style id="info" fontSize="14" marginBottom="8" />
+    </styles>
+    <body style="container">
+      <text style="title">Machine de vote</text>
+      <text style="label">Votant</text>
+      <input style="input" value="Tux" />
+      <text style="label">Candidat</text>
+      <input style="input" value="NixOS" />
+      <text style="button">Voter</text>
+      <text style="info">Tux a voté NixOS</text>
+      <text style="button-green">Votants</text>
+      <text style="button-green">Scores</text>
+      <text style="button-green">Rafraîchir</text>
+    </body>
+  </screen>
+</doc>

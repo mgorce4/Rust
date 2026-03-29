@@ -4,4 +4,4 @@ resolver = "2"
 
 members = ["chat_iut","concurrency", "exquisite_corpse", "machine_de_vote", "network_services","option_and_results",
     "ownership"
-, "port_scanner", "v010_spaghetti", "v020_configuration", "v021_app_builder", "v030_domain", "v040_memory", "v041_file", "v050_use_cases", "v060_text_interfaces","v070_cli_services","v071_tcp_service","v080_html","v090_json"]
+, "port_scanner", "v010_spaghetti", "v020_configuration", "v021_app_builder", "v030_domain", "v040_memory", "v041_file", "v050_use_cases", "v060_text_interfaces","v070_cli_services","v071_tcp_service","v080_html","v090_json", "V100_hxml"]

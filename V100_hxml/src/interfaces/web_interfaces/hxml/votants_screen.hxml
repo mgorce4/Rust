@@ -1,0 +1,17 @@
+<doc xmlns="https://hyperview.org/hyperview">
+  <screen>
+    <styles>
+      <style id="title" fontSize="28" fontWeight="bold" marginBottom="16" />
+      <style id="votant" fontSize="18" marginBottom="4" />
+      <style id="button-green" backgroundColor="#228B22" color="white" fontSize="18" padding="10" marginBottom="8" textAlign="center" />
+      <style id="container" padding="16" />
+    </styles>
+    <body style="container">
+      <text style="title">Votants</text>
+      <text style="votant">Linus</text>
+      <text style="votant">Tux</text>
+      <text style="button-green">Fermer</text>
+      <text style="button-green">Rafraîchir</text>
+    </body>
+  </screen>
+</doc>
