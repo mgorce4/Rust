@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Machine de vote</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h1, h2 { margin-bottom: 0.5em; }
+        .section { margin-bottom: 1.5em; }
+        label { display: block; margin-top: 0.5em; }
+        input[type="text"] { width: 200px; }
+        ul { margin-top: 0.5em; }
+    </style>
+</head>
+<body>
+    <h1>Machine de vote</h1>
+
+    <div class="section">
+        <h2>Urne</h2>
+        <form>
+            <label>Votant
+                <input type="text" name="votant">
+            </label>
+            <label>Candidat
+                <input type="text" name="candidat">
+            </label>
+            <button type="submit">voter</button>
+        </form>
+    </div>
+
+    <div class="section">
+        <h2>Scores</h2>
+        <ul>
+            <li>Arch 1</li>
+            <li>Fedora 0</li>
+            <li>Nix 0</li>
+            <li>blanc 0</li>
+            <li>nul 0</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>Votants</h2>
+        <ul>
+            <li>Tux</li>
+        </ul>
+    </div>
+</body>
+</html>
